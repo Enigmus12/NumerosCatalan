@@ -1,5 +1,6 @@
 package eci.edu.co.Proxi.controller;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,12 +11,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @RestController
+@CrossOrigin(origins = "*")
+
 public class ProxiController {
 
     private static final String USER_AGENT = "Mozilla/5.0";
 
-    private static final String ACTIVE_URL = "http://18.234.215.214";
-    private static final String PASSIVE_URL = "http://34.228.20.128";
+    private static final String ACTIVE_URL = "http://18.234.215.214:8081";
+    private static final String PASSIVE_URL = "http://34.228.20.128:8082";
 
     private static boolean activeIsPrimary = true;
 
