@@ -1,41 +1,42 @@
 package eci.edu.co.Catalan.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.GetMapping; 
+import org.springframework.web.bind.annotation.RequestParam; 
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-
-@RestController
+@RestController 
 public class CatalanController {
 
-    @GetMapping("/catalancito")
-    public String catalan(@RequestParam(value = "value") int n) {
-        if (n < 0) return "{\"error\":\"Ingrese un número > 0\"}";
-        List<BigInteger> List = new ArrayList<>();
-        List.add(BigInteger.ONE);
+    @GetMapping("/Api-Catalan")
+    public String getCatalan(@RequestParam(value = "value") int n) {
+        if (n < 0) {
+            return "{\"error\":\"Ingrese un numero > 0\"}";
+        }
 
-        for (int i = 1; i <= n; i++) {
-            BigInteger b = BigInteger.ZERO;
-            for (int j = 0; j < i; j++) {
-                b = b.add(List.get(j).multiply(List.get(i - 1 - j)));
+        StringBuilder resultado = new StringBuilder();
+
+        for (int i = 0; i <= n; i++) {
+            long catalan = calcularCatalan(i);
+            resultado.append(catalan);
+            if (i < n) {
+                resultado.append(", ");
             }
-            List.add(b);
         }
 
-        StringBuilder result = new StringBuilder();
-        for (BigInteger c : List) {
-            result.append(c.toString()).append(", ");
-        }
-
-        String output = result.substring(0, result.length() - 2);
-
-        return "{ \"operation\": \"Secuencia de Catalan\", " +
-               "\"input\": " + n + ", " +
-               "\"output\": \"" + output + "\" }";
+        return "{ \"service\": \"Back\", " +
+                "\"operation\": \"Secuencia de Catalan\", " +
+                "\"input\": " + n + ", " +
+                "\"output\": \"" + resultado + "\" }";
     }
 
+    private long calcularCatalan(int n) {
+        if (n == 0 || n == 1) return 1;
+
+        long catalan = 0;
+        for (int i = 0; i < n; i++) {
+            catalan += calcularCatalan(i) * calcularCatalan(n - 1 - i);
+        }
+        return catalan;
+    }
 }
 
