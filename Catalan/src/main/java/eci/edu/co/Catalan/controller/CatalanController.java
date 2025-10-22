@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController 
 public class CatalanController {
 
-    @GetMapping("/Api-Catalan")
+    @GetMapping("/Api-catalan")
     public String getCatalan(@RequestParam(value = "value") int n) {
         if (n < 0) {
             return "{\"error\":\"Ingrese un numero > 0\"}";
@@ -38,5 +38,6 @@ public class CatalanController {
         }
         return catalan;
     }
+    
 }
 

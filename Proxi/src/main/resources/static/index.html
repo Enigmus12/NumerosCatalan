@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Secuencia de Catalan</title>
+<title>Secuencia de Numeros de Catalan</title>
 </head>
 <body>
 <h2>Calcular Secuencia de Catalan</h2>
@@ -21,7 +21,7 @@ function getCatalan() {
     xhttp.onload = function() {
         document.getElementById("result").innerHTML = this.responseText;
     }
-    xhttp.open("GET", "http://<URL_DEL_PROXY>/catalan?value=" + val);
+    xhttp.open("GET", "http://ec2-18-212-202-188.compute-1.amazonaws.com:8080/Api-catalan?value=" + val);
     xhttp.send();
 }
 </script>

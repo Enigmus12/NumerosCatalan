@@ -1,47 +1,66 @@
 package eci.edu.co.Proxi.controller;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+@RestController
 public class ProxiController {
-    
-    
+
     private static final String USER_AGENT = "Mozilla/5.0";
-    private static final String GET_URL = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=fb&apikey=Q1QZFVJQ21K7C6XM";
 
-    public static void main(String[] args) throws IOException {
+    private static final String ACTIVE_URL = "http://18.234.215.214";
+    private static final String PASSIVE_URL = "http://34.228.20.128";
 
-        URL obj = new URL(GET_URL);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-        con.setRequestMethod("GET");
-        con.setRequestProperty("User-Agent", USER_AGENT);
-        
-        //The following invocation perform the connection implicitly before getting the code
-        int responseCode = con.getResponseCode();
-        System.out.println("GET Response Code :: " + responseCode);
-        
-        if (responseCode == HttpURLConnection.HTTP_OK) { // success
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                    con.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
+    private static boolean activeIsPrimary = true;
 
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
+    @GetMapping("/Api-catalan")
+    public String catalan(@RequestParam(value = "value") int value) {
+        String response;
+        String active = activeIsPrimary ? ACTIVE_URL : PASSIVE_URL;
+        String noActive = activeIsPrimary ? PASSIVE_URL : ACTIVE_URL;
+
+        try {
+            response = sendGet(active + "/Api-catalan?value=" + value);
+            System.out.println(" Servicio activo funcionando: " + active);
+        } catch (Exception e) {
+            System.out.println(" Servicio activo caido: " + active);
+            activeIsPrimary = !activeIsPrimary; 
+            try {
+                response = sendGet(noActive + "/Api-catalan?value=" + value);
+                System.out.println(" Ahora estamos en el servicio pasivo: " + noActive);
+            } catch (Exception ex) {
+                System.out.println(" Ambos servicios caídos");
+                response = "{\"error\":\"Ningun servicio disponible\"}";
             }
-            in.close();
-
-            // print result
-            System.out.println(response.toString());
-        } else {
-            System.out.println("GET request not worked");
         }
-        System.out.println("GET DONE");
+        return response;
     }
 
-} 
+    private String sendGet(String urlStr) throws Exception {
+        URL obj  = new URL(urlStr);
+        HttpURLConnection con = (HttpURLConnection) obj .openConnection();
+        con.setRequestMethod("GET");
+        con.setRequestProperty("User-Agent", USER_AGENT);
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder content = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            content.append(inputLine);
+        }
+
+        in.close();
+        con.disconnect();
+        return content.toString();
+    }
+}
+
 
 
